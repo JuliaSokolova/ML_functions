@@ -3,6 +3,8 @@ Implementation of kNN algorithm modeled on sci-kit learn functionality
 '''
 
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def euclidean_distance(a, b):
@@ -88,6 +90,24 @@ class kNNRegressor:
         result: numpy array, shape = (n_observations,)
             Predicted values for each test data sample.
         """
+        num_train_rows, num_train_cols = self.X_train.shape
+        num_X_rows, _ = X.shape
+        X = X.reshape((-1, num_train_cols))
+        distances = np.zeros(num_X_rows, num_train_rows)
+        for i, x in enumerate(X):
+            for j, x_train in enumerate(self.X_train):
+                distances[i, j] = self.distance(x_train, x)
+        # sort and take top k for each item in X
+        k_closest_idx = distances.argsort()[:, :self.k]
+        top_k = self.y_train[k_closest_idx]
+        if self.weighted:
+            top_k_distances = distances[np.arange(num_X_rows)[:, None], k_closest_idx]
+            result = np.average(top_k, axis=1, weights=1/top_k_distances)
+        else: result = top_k.mean(axis=1)
+
+        return result
+
+
         
 
 
