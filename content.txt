@@ -1,3 +1,9 @@
 # data prep
 
 train_test_split_data()
+
+# ML modles
+KNN
+
+# models evaluation
+cross-validation
